@@ -1,0 +1,13 @@
+{% extends 'education_modules/base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2>Удаление модуля</h2>
+    <p>Вы уверены, что хотите удалить модуль "{{ object.title }}"?</p>
+    <form method="post" action="">
+      {% csrf_token %}
+      <input type="submit" class="btn btn-danger" value="Удалить">
+      <a href="{% url 'education_modules:education_detail' pk=object.pk %}" class="btn btn-secondary">Отмена</a>
+    </form>
+  </div>
+{% endblock %}

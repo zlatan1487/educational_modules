@@ -1,0 +1,59 @@
+
+{% extends 'education_modules/base.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="justify-content-center">
+            <div class="col-md-12">
+                <div class="card">
+                    {% if object.avatar %}
+                      {% with avatar_url=object.avatar.url %}
+                        {% if avatar_url %}
+                          <img src="{{ avatar_url }}" class="card-img-top rounded-circle mx-auto d-block" alt="{{ education_module.title }}" style="width: 200px; height: 200px; object-fit: cover; margin-top:35px">
+                        {% endif %}
+                      {% endwith %}
+                    {% else %}
+                      {% with first_letter=object.title|first %}
+                        <div class="d-flex justify-content-center align-items-center" style="width: 200px; height: 200px; background-color: #f2f2f2; border-radius: 50%; margin: auto; margin-top:35px; border: 1px solid #ccc">
+                          <span class="text-primary" style="font-size: 24px;">{{ first_letter|upper }}</span>
+                        </div>
+                      {% endwith %}
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ object.title }}</h5>
+                        <p class="card-text">{{ object.description }}</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Порядковый номер: {{ object.order_number }}</li>
+                        <li class="list-group-item">Дата создания: {{ object.created_at }}</li>
+                        <li class="list-group-item">Владелец:
+                        {% if object.author.first_name or object.author.last_name %}
+                            {{ object.author.first_name|default:"" }} {{ object.author.last_name|default:"" }}
+                        {% else %}
+                            Неизвестный пользователь
+                        {% endif %}
+                        </li>
+                        <li class="list-group-item">Активный курс: {% if object.is_active %}Да{% else %}Нет{% endif %}</li>
+                        <li class="list-group-item">Отзывов: {{ object.reviews.count }}</li>
+                    </ul>
+                    <div class="card-body d-flex justify-content-between">
+                        <a href="{% url 'education_modules:education_list' %}" class="btn btn-primary">Назад к списку</a>
+                        {% if object.owner == request.user %}
+                            <a href="{% url 'education_modules:education_update' object.pk %}" class="btn btn-info ml-2">Изменить</a>
+                            <a href="{% url 'education_modules:education_delete' object.pk %}" class="btn btn-danger ml-auto">Удалить</a>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <h5 class="mt-4">Оставить отзыв:</h5>
+                        <form method="post" action="{% url 'education_modules:add_review' pk=object.pk %}">
+                          {% csrf_token %}
+                          {{ form.as_p }}
+                          <button type="submit" class="btn btn-success">Отправить отзыв</button>
+                        </form>
+                        {% include 'education_modules/reviews.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,29 @@
+<h5>Отзывы:</h5>
+<div class="list-group">
+    <div>
+        {% for review in object.reviews.all %}
+        <div class="list-group-item rounded-bottom mb-2" style="border-radius: 8px">
+            <div style="border: 1px solid #cc">
+                <div class="d-flex justify-content-between">
+                    <h5 class="mb-1">
+                        {% if review.author.first_name or review.author.last_name %}
+                            {{ review.author.first_name|default:"" | capfirst }} {{ review.author.last_name|default:"" | capfirst }}
+                        {% else %}
+                            Неизвестный пользователь
+                        {% endif %}
+                    </h5>
+                    <small>{{ review.created_at }}</small>
+                </div>
+                <p class="mb-1">{{ review.text }}</p>
+
+                {% if user.is_superuser %}
+                    <form style="overflow: hidden; padding: 0; width: 70px" method="post" action="{% url 'education_modules:delete_review' review.id %}" class="mt-2 ml-auto">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

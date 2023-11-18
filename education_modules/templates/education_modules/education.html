@@ -1,0 +1,47 @@
+{% extends 'education_modules/base.html' %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+
+    <div class="col-12" style="margin-bottom: 50px;">
+      <a class="btn btn-outline-primary" href="{% url 'education_modules:create_education' %}">Создать модуль</a>
+    </div>
+
+    {% for object in education_list %}
+      <div class="col-6 col-md-6">
+        <div class="card shadow-sm" style="margin-bottom: 10px">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-success">Модуль № {{ object.order_number }}</small>
+            </div>
+            <div>
+              {% if object.is_active %}
+                  <div style="width: 10px; height: 10px; border-radius: 50%; background-color: #4FFF33;"></div>
+              {% else %}
+                  <div style="width: 10px; height: 10px; border-radius: 50%; background-color: red;"></div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="card-body">
+            <p><strong>Тема:</strong> {{ object.title | title |truncatechars:35  }}</p>
+            <p><strong>Описание:</strong> {{ object.description | title |truncatechars:33 }}</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-secondary">Отзывы: {{ object.reviews.count }}</small>
+            </div>
+            <div>
+              <a href="{% url 'education_modules:education_detail' pk=object.pk %}" class="btn btn-outline-info mr-2">Смотреть</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+  {% else %}
+    <div class="col-12 d-flex justify-content-center align-items-center" style="height: 200px;">
+      <p class="text-center">Доступен только для авторизированных пользователей</p>
+    </div>
+  {% endif %}
+
+{% endblock %}
