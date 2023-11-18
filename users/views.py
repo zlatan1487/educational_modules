@@ -8,6 +8,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from users.models import User
 from users.form import UserRegisterForm, UserForm
+from django.contrib import messages
+from smtplib import SMTPException
 
 
 class LoginView(BaseLoginView):
@@ -41,14 +43,29 @@ class RegisterView(CreateView):
     }
 
     def form_valid(self, form):
-        new_user = form.save()
-        send_mail(
-            subject='Поздравляем с регистрацией!',
-            message='Вы зарегистрировались на нашей платформе.',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[new_user.email]
-        )
-        return super().form_valid(form)
+        try:
+            new_user = form.save()
+            send_mail(
+                subject='Поздравляем с регистрацией!',
+                message='Вы зарегистрировались на нашей платформе.',
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[new_user.email]
+            )
+            messages.success(self.request, 'Регистрация прошла успешно! '
+                                           'Пожалуйста, войдите.')
+            return super().form_valid(form)
+
+        except SMTPException as e:
+            # Обработка исключения при ошибке отправки почты
+            messages.error(self.request, f'Ошибка при отправке '
+                                         f'почты: {str(e)}')
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка при регистрации. '
+                                     'Проверьте правильность '
+                                     'введенных данных.')
+        return super().form_invalid(form)
 
 
 class UserUpdateView(UpdateView):
