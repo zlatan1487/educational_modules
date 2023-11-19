@@ -3,13 +3,14 @@
 {% block content %}
         <div class="col-3"></div>
         <div class="col-6">
-            <div class="card">
+            <div class="card bg-dark">
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <button type="submit" class="btn btn-success">Регистрация</button>
                     </form>
+                  <p class="mt-3 text-white text-center">У вас уже есть аккаунт? <a href="{% url 'users:login' %}" class="text-success">Вход</a></p>
                 </div>
             </div>
         </div>
