@@ -8,12 +8,7 @@
                 Мой профиль
             </div>
             <div class="card-body text-center"> {# Center the content #}
-                <div style="position: relative; display: inline-block;">
-                    <div style="border-radius: 50%; overflow: hidden; width: 150px; height: 150px; position: relative;">
-                        <!-- Add your avatar image here -->
-                        <img src="{{ avatar.url }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                </div>
+
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
