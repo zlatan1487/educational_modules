@@ -2,8 +2,14 @@ FROM python:3
 
 WORKDIR /app
 
-COPY ./requirements.txt /code/
+# Копируем файл с зависимостями внутрь контейнера
+COPY ./requirements.txt /app/
 
-RUN pip install --no-cache-dir -r requirements.txt || echo "Failed to install requirements"
+# Устанавливаем зависимости
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Копируем остальные файлы внутрь контейнера
 COPY . .
+
+# Команда, которая будет выполняться при запуске контейнера
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

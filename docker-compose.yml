@@ -2,19 +2,26 @@ version: '3'
 services:
   db:
     image: postgres
-    env_file: .env
     ports:
       - '5432:5432'
     volumes:
       - pg_data:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_DB: ${NAME}
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
 
   app:
     build: .
-    command: python manage.py migrate && python runserver 0.0.0.0:8000
+    command: python manage.py migrate && python manage.py runserver 0.0.0.0:8000
     ports:
       - '8001:8000'
     depends_on:
       - db
+    environment:
+      NAME: ${NAME}
+      USER: ${USER}
+      PASSWORD: ${PASSWORD}
 
 volumes:
   pg_data:
