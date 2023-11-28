@@ -34,6 +34,8 @@ python manage.py migrate
 
 Запустите сервер:
 python manage.py runserver
+docker-compose build      
+docker-compose up -d     
 
 Функциональность
 Реализованы CRUD операции для модели (моделей).
