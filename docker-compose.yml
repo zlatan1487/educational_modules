@@ -1,22 +1,33 @@
-version: '3'
-services:
-  db:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: ${PASSWORD}
-      PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
-        - '5432:5432'
-    volumes:
-      - pg_data:/var/lib/postgresql/data/pgdata
+version: '3.9'
 
-  app:
-    build: .
-    command: python manage.py migrate && python manage.py runserver 0.0.0.0:8000
-    ports:
-      - '8000:8000'
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile
+    env_file: .env
     depends_on:
-      - db
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    command: python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+
+  postgres:
+    image: postgres:14.8-alpine
+    environment:
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${NAME}
+    healthcheck:
+      test: pg_isready -U ${USER} -d ${NAME}
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  pg_data:
+  postgres_data:
